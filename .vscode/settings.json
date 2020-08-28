@@ -1,0 +1,4 @@
+{
+    "python.formatting.provider": "black",
+    "python.pythonPath": "/home/max/.local/share/virtualenvs/grant-cogs-nw7r2F-Z/bin/python"
+}
