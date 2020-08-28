@@ -2,5 +2,6 @@
   "author": ["Aquild"],
   "install_msg": "Successfully installed verification.",
   "name": "User Verification",
-  "short": "verification"
+  "short": "verification",
+  "requirements": ["sendgrid", "python-dotenv"]
 }
