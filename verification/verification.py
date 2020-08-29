@@ -180,7 +180,7 @@ class Verification(commands.Cog):
         """Set domains for verification"""
         await self.config.guild(ctx.guild).domains.set(domains)
 
-        await ctx.send("Set verified domains")
+        await ctx.send("Set verified domains.")
 
     @verificationset.command()
     @commands.guild_only()
@@ -188,7 +188,7 @@ class Verification(commands.Cog):
         """Set trigger message for verification"""
 
         if not await self.config.sendgrid_key():
-            return await ctx.send("There is no SendGrid key set for verification")
+            return await ctx.send("There is no SendGrid key set for verification.")
 
         message: discord.Message = await channel.fetch_message(message_id)
         await self.config.guild(ctx.guild).trigger.set(
@@ -196,7 +196,7 @@ class Verification(commands.Cog):
         )
         await message.add_reaction("✅")
 
-        await ctx.send("Set trigger message")
+        await ctx.send("Set trigger message.")
 
     @verificationset.command()
     @commands.guild_only()
@@ -206,15 +206,15 @@ class Verification(commands.Cog):
             [role.id for role in roles]
         )
 
-        await ctx.send("Set verified role(s)")
+        await ctx.send("Set verified role(s).")
 
     @verificationset.command()
     async def setfromemail(self, ctx, from_email: str):
         await self.config.from_email.set(from_email)
-        await ctx.send("Set from email")
+        await ctx.send("Set from email.")
 
     @verificationset.command()
     async def setsendgridkey(self, ctx: commands.Context, key: str):
         await self.config.sendgrid_key.set(key)
-        await ctx.send("Set SendGrid key")
+        await ctx.send("Set SendGrid key.")
         await ctx.message.delete()

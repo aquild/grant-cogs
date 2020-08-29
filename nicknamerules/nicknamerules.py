@@ -30,7 +30,7 @@ class NicknameRules(commands.Cog):
                     title="Invalid Nickname",
                     description=(
                         "To ensure a safe environment, your nickname must include your real first name.\n"
-                        "You can still use your psuedonym by including your name elsewhere e.g. `epicgamer69420 (Chad)`"
+                        "You can still use your psuedonym by including your name elsewhere e.g. `epicgamer69420 (Chad)`."
                     ),
                 )
                 embed.set_author(name=after.guild.name, icon_url=after.guild.icon_url)
