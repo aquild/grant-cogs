@@ -98,7 +98,11 @@ class Verification(commands.Cog):
         """Verify user"""
 
         user_config = self.config.user(ctx.author)
-        await user_config.name.set((first_name, last_name))
+
+        if await user_config.name():
+            await ctx.send("Name already set, contact a staff member to change it manually.")
+        else:
+            await user_config.name.set((first_name, last_name))
 
         correct = await user_config.verification_code() == verification_code
         if not correct:
@@ -131,6 +135,35 @@ class Verification(commands.Cog):
                     )
                 )
 
+    @commands.command(aliases=["getinfo"])
+    async def verificationinfo(self, ctx, user: discord.User):
+        """Get information about a verified user"""
+        user_config = self.config.user(user)
+        name = await user_config.name()
+        email = await user_config.email()
+
+        embed = discord.Embed(title="User Info")
+        embed.set_author(name=ctx.guild.get_member(user.id).nick if ctx.guild else user.name, icon_url=user.avatar_url)
+        if name:
+            embed.add_field(name="First Name", value=name[0])
+            embed.add_field(name="Last Name", value=name[1])
+        if email:
+            embed.add_field(name="Email", value=email)
+
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    async def manualverify(
+        self, ctx, user: discord.User, email: str, first_name: str, last_name: str
+    ):
+        """Manually verify a user"""
+
+        user_config = self.config.user(user)
+        await user_config.email.set(email)
+        await user_config.name.set((first_name, last_name))
+
+        await ctx.send("Manually updated user information.")
+
     @commands.group()
     async def verificationset(self, ctx):
         """Configure user verification"""
@@ -150,7 +183,7 @@ class Verification(commands.Cog):
         """Set trigger message for verification"""
 
         if not await self.config.sendgrid_key():
-            return ctx.send("There is no SendGrid key set for verification")
+            return await ctx.send("There is no SendGrid key set for verification")
 
         message: discord.Message = await channel.fetch_message(message_id)
         await self.config.guild(ctx.guild).trigger.set(
