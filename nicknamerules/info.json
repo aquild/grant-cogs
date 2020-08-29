@@ -1,0 +1,7 @@
+{
+  "author": ["Aquild"],
+  "install_msg": "Successfully installed Nickname Rules.",
+  "name": "Nickname Rule Enforcement",
+  "short": "Nickname Rules",
+  "cog_requires": { "verification": "https://github.com/aquild/grant-cogs" }
+}

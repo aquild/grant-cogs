@@ -3,6 +3,7 @@ from redbot.core import commands, Config
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import random
+import traceback
 
 import os
 from dotenv import load_dotenv
@@ -15,7 +16,7 @@ class Verification(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.config = Config.get_conf(self, identifier=6404779258129957944)
+        self.config = Config.get_conf(self, identifier=273062)
 
         # Default config
         self.config.register_global(
@@ -26,7 +27,7 @@ class Verification(commands.Cog):
             verified_roles=[],
             trigger={"channel": None, "message": None},
         )
-        self.config.register_user(email=None, verification_code=None)
+        self.config.register_user(email=None, verification_code=None, name=tuple())
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, event: discord.RawReactionActionEvent):
@@ -80,6 +81,7 @@ class Verification(commands.Cog):
                 )
             )
         except Exception as e:
+            traceback.print_exc()
             await ctx.send(
                 "There was an error sending the email. DM a staff member to verify manually."
             )
@@ -96,11 +98,14 @@ class Verification(commands.Cog):
         """Verify user"""
 
         user_config = self.config.user(ctx.author)
-        await user_config.first_name.set(first_name)
-        await user_config.last_name.set(last_name)
+        await user_config.name.set((first_name, last_name))
 
-        if not await user_config.verification_code() == verification_code:
+        correct = await user_config.verification_code() == verification_code
+        if not correct:
             return await ctx.send("Verification code is incorrect.")
+
+        verification_code = "".join([str(n) for n in random.choices(range(10), k=6)])
+        await user_config.verification_code.set(verification_code)
 
         for guild in self.bot.guilds:
             guild_config = self.config.guild(guild)
@@ -116,11 +121,12 @@ class Verification(commands.Cog):
                             for role in await guild_config.verified_roles()
                         ]
                     )
+                    await member.edit(nick=first_name)
                     await ctx.send(f"Verified in server: {guild.name}.")
             else:
                 await ctx.send(
                     (
-                        f"Failed to verify in server: {guild.name}. Invalid email domain.\n"
+                        f"Failed to verify in server {guild.name} due to an invalid email domain.\n"
                         f"Valid email domains: {', '.join(await guild_config.domains())}"
                     )
                 )
