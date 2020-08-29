@@ -29,11 +29,14 @@ class Verification(commands.Cog):
         self.config.register_user(email=None, verification_code=None)
 
     @commands.Cog.listener()
-    async def on_reaction_add(self, reaction: discord.Reaction, member: discord.Member):
-        guild_config = self.config.guild(member.guild)
+    async def on_raw_reaction_add(self, event: discord.RawReactionActionEvent):
+        if not event.guild_id:
+            return
+
+        guild_config = self.config.guild_from_id(event.guild_id)
         guild_trigger = await guild_config.trigger()
 
-        if reaction.message.id == guild_trigger["message"]:
+        if event.message_id == guild_trigger["message"]:
 
             embed = discord.Embed(
                 title="Verification",
@@ -44,10 +47,11 @@ class Verification(commands.Cog):
                     "You'll get an email with a code and instructions to verify."
                 ),
             )
-            embed.set_author(member.guild.name)
-            embed.set_thumbnail(member.guild.icon)
+            guild: discord.Guild = self.bot.get_guild(event.guild_id)
+            user = self.bot.get_user(event.user_id)
+            embed.set_author(name=guild.name, icon_url=guild.icon_url)
 
-            await member.send(embed=embed)
+            await user.send(embed=embed)
 
     @commands.command()
     @commands.dm_only()
@@ -72,7 +76,7 @@ class Verification(commands.Cog):
                 (
                     "Sent verification email...\n"
                     "Once you've recieved the email use the !verify command like this to complete your verification:\n"
-                    "!verify <your verification code> <your first name> <your last name>"
+                    "`!verify <your verification code> <your first name> <your last name>`"
                 )
             )
         except Exception as e:
@@ -112,7 +116,14 @@ class Verification(commands.Cog):
                             for role in await guild_config.verified_roles()
                         ]
                     )
-                    await ctx.send(f"Verified in server: {guild.name}")
+                    await ctx.send(f"Verified in server: {guild.name}.")
+            else:
+                await ctx.send(
+                    (
+                        f"Failed to verify in server: {guild.name}. Invalid email domain.\n"
+                        f"Valid email domains: {', '.join(await guild_config.domains())}"
+                    )
+                )
 
     @commands.group()
     async def verificationset(self, ctx):
