@@ -100,7 +100,9 @@ class Verification(commands.Cog):
         user_config = self.config.user(ctx.author)
 
         if await user_config.name():
-            await ctx.send("Name already set, contact a staff member to change it manually.")
+            await ctx.send(
+                "Name already set, contact a staff member to change it manually."
+            )
         else:
             await user_config.name.set((first_name, last_name))
 
@@ -143,7 +145,10 @@ class Verification(commands.Cog):
         email = await user_config.email()
 
         embed = discord.Embed(title="User Info")
-        embed.set_author(name=ctx.guild.get_member(user.id).nick if ctx.guild else user.name, icon_url=user.avatar_url)
+        embed.set_author(
+            name=ctx.guild.get_member(user.id).nick if ctx.guild else user.name,
+            icon_url=user.avatar_url,
+        )
         if name:
             embed.add_field(name="First Name", value=name[0])
             embed.add_field(name="Last Name", value=name[1])
@@ -209,6 +214,7 @@ class Verification(commands.Cog):
         await ctx.send("Set from email")
 
     @verificationset.command()
-    async def setsendgridkey(self, ctx, key: str):
+    async def setsendgridkey(self, ctx: commands.Context, key: str):
         await self.config.sendgrid_key.set(key)
         await ctx.send("Set SendGrid key")
+        await ctx.message.delete()
