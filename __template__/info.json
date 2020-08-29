@@ -1,0 +1,7 @@
+{
+  "author": ["Aquild"],
+  "install_msg": "Successfully installed <Cog Short Name>.",
+  "name": "<Cog Name>",
+  "short": "<Cog Short Name>",
+  "requirements": ["<Pip Requirements>"]
+}
