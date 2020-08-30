@@ -151,7 +151,7 @@ class Verification(commands.Cog):
 
         embed = discord.Embed(title="User Info")
         embed.set_author(
-            name=ctx.guild.get_member(user.id).nick if ctx.guild else user.name,
+            name=user.name,
             icon_url=user.avatar_url,
         )
         if name:
@@ -222,4 +222,3 @@ class Verification(commands.Cog):
     async def setsendgridkey(self, ctx: commands.Context, key: str):
         await self.config.sendgrid_key.set(key)
         await ctx.send("Set SendGrid key.")
-        await ctx.message.delete()
