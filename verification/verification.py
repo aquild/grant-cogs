@@ -137,8 +137,13 @@ class Verification(commands.Cog):
                     )
                 )
 
-    @commands.command(aliases=["getinfo"])
-    async def verificationinfo(self, ctx, user: discord.User):
+    @commands.group()
+    async def verified(self, ctx):
+        """Verification commands"""
+        pass
+
+    @verified.command(aliases=["getinfo"])
+    async def info(self, ctx, user: discord.User):
         """Get information about a verified user"""
         user_config = self.config.user(user)
         name = await user_config.name()
@@ -157,8 +162,8 @@ class Verification(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def manualverify(
+    @verified.command()
+    async def manual(
         self, ctx, user: discord.User, email: str, first_name: str, last_name: str
     ):
         """Manually verify a user"""
