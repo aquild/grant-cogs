@@ -181,6 +181,26 @@ class Verification(commands.Cog):
 
         await ctx.send("Manually updated user information and added roles.")
 
+    @verification.command()
+    async def instructions(self, ctx: discord.Context):
+        """Send verification instructions"""
+
+        prefix = (await self.bot.get_valid_prefixes())[0]
+        embed = discord.Embed(
+            title="Verification",
+            description=(
+                "In order to join we need to verify that you really are a student.\n"
+                f"To start verification, use the {prefix}getcode command like this to get a verification code:\n"
+                f"`{prefix}getcode <your student email>`\n"
+                "You'll get instructions on how to verify and an email with your code."
+            ),
+        )
+        guild: discord.Guild = self.bot.get_guild(event.guild_id)
+        user = self.bot.get_user(event.user_id)
+        embed.set_author(name=guild.name, icon_url=guild.icon_url)
+
+        await user.send(embed=embed)
+
     @commands.group()
     async def verificationset(self, ctx):
         """Configure user verification"""
