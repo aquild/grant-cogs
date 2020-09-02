@@ -182,7 +182,7 @@ class Verification(commands.Cog):
         await ctx.send("Manually updated user information and added roles.")
 
     @verification.command()
-    async def instructions(self, ctx: discord.Context):
+    async def instructions(self, ctx: commands.Context):
         """Send verification instructions"""
 
         prefix = (await self.bot.get_valid_prefixes())[0]
@@ -195,11 +195,8 @@ class Verification(commands.Cog):
                 "You'll get instructions on how to verify and an email with your code."
             ),
         )
-        guild: discord.Guild = self.bot.get_guild(event.guild_id)
-        user = self.bot.get_user(event.user_id)
-        embed.set_author(name=guild.name, icon_url=guild.icon_url)
 
-        await user.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.group()
     async def verificationset(self, ctx):
