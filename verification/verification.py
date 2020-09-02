@@ -38,14 +38,14 @@ class Verification(commands.Cog):
         guild_trigger = await guild_config.trigger()
 
         if event.message_id == guild_trigger["message"]:
-
+            prefix = (await self.bot.get_valid_prefixes())[0]
             embed = discord.Embed(
                 title="Verification",
                 description=(
                     "In order to join we need to verify that you really are a student.\n"
-                    "To start verification, use the !verifyemail command like this:\n"
-                    "`!verifyemail <your student email>`\n"
-                    "You'll get an email with a code and instructions to verify."
+                    f"To start verification, use the {prefix}getcode command like this to get a verification code:\n"
+                    f"`{prefix}getcode <your student email>`\n"
+                    "You'll get instructions on how to verify and an email with your code."
                 ),
             )
             guild: discord.Guild = self.bot.get_guild(event.guild_id)
@@ -56,7 +56,7 @@ class Verification(commands.Cog):
 
     @commands.command()
     @commands.dm_only()
-    async def verifyemail(self, ctx, email: str):
+    async def getcode(self, ctx, email: str):
         """Send verification email"""
 
         user_config = self.config.user(ctx.author)
@@ -73,17 +73,18 @@ class Verification(commands.Cog):
         try:
             sg = SendGridAPIClient(await self.config.sendgrid_key())
             sg.send(message)
+            prefix = (await self.bot.get_valid_prefixes())[0]
             await ctx.send(
                 (
                     "Sent verification email...\n"
-                    "Once you've recieved the email use the !verify command like this to complete your verification:\n"
-                    "`!verify <your verification code> <your first name> <your last name>`"
+                    f"Once you've recieved the email use the {prefix} verify command like this to complete your verification:\n"
+                    f"`{prefix}verify <your verification code> <your first name> <your last name>`"
                 )
             )
         except Exception as e:
             traceback.print_exc()
             await ctx.send(
-                "There was an error sending the email. DM a staff member to verify manually."
+                "There was an error while sending the email. DM a staff member to verify manually."
             )
 
     @commands.command()
@@ -108,10 +109,9 @@ class Verification(commands.Cog):
 
         correct = await user_config.verification_code() == verification_code
         if not correct:
-            return await ctx.send("Verification code is incorrect.")
-
-        verification_code = "".join([str(n) for n in random.choices(range(10), k=6)])
-        await user_config.verification_code.set(verification_code)
+            return await ctx.send(
+                "Verification code is incorrect. If this problem persists, please contact a staff member."
+            )
 
         for guild in self.bot.guilds:
             guild_config = self.config.guild(guild)
@@ -138,11 +138,12 @@ class Verification(commands.Cog):
                 )
 
     @commands.group()
-    async def verified(self, ctx):
+    @commands.mod()
+    async def verification(self, ctx):
         """Verification commands"""
         pass
 
-    @verified.command(aliases=["getinfo"])
+    @verification.command(aliases=["getinfo"])
     async def info(self, ctx, user: discord.User):
         """Get information about a verified user"""
         user_config = self.config.user(user)
@@ -162,17 +163,25 @@ class Verification(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @verified.command()
+    @verification.command()
+    @commands.guild_only()
     async def manual(
-        self, ctx, user: discord.User, email: str, first_name: str, last_name: str
+        self, ctx, member: discord.Member, email: str, first_name: str, last_name: str
     ):
         """Manually verify a user"""
 
-        user_config = self.config.user(user)
+        user_config = self.config.user(member)
         await user_config.email.set(email)
         await user_config.name.set((first_name, last_name))
 
-        await ctx.send("Manually updated user information.")
+        await member.add_roles(
+            *[
+                ctx.guild.get_role(role)
+                for role in await self.config.guild(ctx.guild).verified_roles()
+            ]
+        )
+
+        await ctx.send("Manually updated user information and added roles.")
 
     @commands.group()
     async def verificationset(self, ctx):
