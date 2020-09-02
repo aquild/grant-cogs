@@ -55,7 +55,6 @@ class Verification(commands.Cog):
             await user.send(embed=embed)
 
     @commands.command()
-    @commands.dm_only()
     async def getcode(self, ctx, email: str):
         """Send verification email"""
 
@@ -88,7 +87,6 @@ class Verification(commands.Cog):
             )
 
     @commands.command()
-    @commands.dm_only()
     async def verify(
         self,
         ctx: commands.Context,
