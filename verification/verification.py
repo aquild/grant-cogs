@@ -23,11 +23,39 @@ class Verification(commands.Cog):
             sendgrid_key=os.getenv("SENDGRID_KEY"), from_email=None
         )
         self.config.register_guild(
+            welcome_message=(
+                "Welcome to the server! Make sure to read the rules!\n"
+                "**Important:** to access the server, you must complete the verification process. Toi verify, follow the instructions below."
+            ),
             domains=[],
             verified_roles=[],
             trigger={"channel": None, "message": None},
         )
         self.config.register_user(email=None, verification_code=None, name=tuple())
+
+    async def get_instructions(self, guild=None) -> discord.Embed:
+        prefix = (await self.bot.get_valid_prefixes())[0]
+        embed = discord.Embed(
+            title="Verification",
+            description=(
+                "In order to join we need to verify that you really are a student.\n"
+                f"To start verification, use the {prefix}getcode command like this to get a verification code:\n"
+                f"`{prefix}getcode <your student email>`\n"
+                "You'll get instructions on how to verify and an email with your code."
+            ),
+        )
+        if guild:
+            embed.set_author(name=guild.name, icon_url=guild.icon_url)
+
+        return embed
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member: discord.Member):
+        message = await self.config.guild(member.guild).welcome_message()
+        if message:
+            await member.send(
+                content=message, embed=await self.get_instructions(guild=member.guild)
+            )
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, event: discord.RawReactionActionEvent):
@@ -38,21 +66,12 @@ class Verification(commands.Cog):
         guild_trigger = await guild_config.trigger()
 
         if event.message_id == guild_trigger["message"]:
-            prefix = (await self.bot.get_valid_prefixes())[0]
-            embed = discord.Embed(
-                title="Verification",
-                description=(
-                    "In order to join we need to verify that you really are a student.\n"
-                    f"To start verification, use the {prefix}getcode command like this to get a verification code:\n"
-                    f"`{prefix}getcode <your student email>`\n"
-                    "You'll get instructions on how to verify and an email with your code."
-                ),
-            )
-            guild: discord.Guild = self.bot.get_guild(event.guild_id)
             user = self.bot.get_user(event.user_id)
-            embed.set_author(name=guild.name, icon_url=guild.icon_url)
-
-            await user.send(embed=embed)
+            await user.send(
+                embed=await self.get_instructions(
+                    guild=self.bot.get_guild(event.guild_id)
+                )
+            )
 
     @commands.command()
     async def getcode(self, ctx, email: str):
@@ -184,19 +203,7 @@ class Verification(commands.Cog):
     @verification.command()
     async def instructions(self, ctx: commands.Context):
         """Send verification instructions"""
-
-        prefix = (await self.bot.get_valid_prefixes())[0]
-        embed = discord.Embed(
-            title="Verification",
-            description=(
-                "In order to join we need to verify that you really are a student.\n"
-                f"To start verification, use the {prefix}getcode command like this to get a verification code:\n"
-                f"`{prefix}getcode <your student email>`\n"
-                "You'll get instructions on how to verify and an email with your code."
-            ),
-        )
-
-        await ctx.send(embed=embed)
+        await ctx.send(embed=await self.get_instructions())
 
     @commands.group()
     async def verificationset(self, ctx):
@@ -224,6 +231,15 @@ class Verification(commands.Cog):
             {"channel": channel.id, "message": message.id}
         )
         await message.add_reaction("✅")
+
+        await ctx.send("Set trigger message.")
+
+    @verificationset.command()
+    @commands.guild_only()
+    async def setwelcome(self, ctx, message: str):
+        """Set welcome message"""
+
+        await self.config.guild(ctx.guild).welcome_message.set(message)
 
         await ctx.send("Set trigger message.")
 
