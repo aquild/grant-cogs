@@ -1,5 +1,6 @@
 import discord
 from redbot.core import commands, Config
+import pprint
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import random
@@ -31,7 +32,9 @@ class Verification(commands.Cog):
             verified_roles=[],
             trigger={"channel": None, "message": None},
         )
-        self.config.register_user(email=None, verification_code=None, name=tuple())
+        self.config.register_user(
+            email=None, verification_code=None, last_code=None, name=tuple()
+        )
 
     async def get_instructions(self, guild=None) -> discord.Embed:
         prefix = (await self.bot.get_valid_prefixes())[0]
@@ -117,6 +120,8 @@ class Verification(commands.Cog):
 
         user_config = self.config.user(ctx.author)
 
+        await user_config.last_code.set(verification_code)
+
         if await user_config.name():
             await ctx.send(
                 "Name already set, contact a staff member to change it manually."
@@ -155,7 +160,7 @@ class Verification(commands.Cog):
                 )
 
     @commands.group()
-    @commands.mod()
+    @commands.admin()
     async def verification(self, ctx):
         """Verification commands"""
         pass
@@ -179,6 +184,21 @@ class Verification(commands.Cog):
             embed.add_field(name="Email", value=email)
 
         await ctx.send(embed=embed)
+
+    @verification.command()
+    async def log(self, ctx, user: discord.User):
+        user_config = self.config.user(user)
+
+        embed = discord.Embed(title="User Log")
+        embed.add_field(
+            name="Correct Code",
+            value=pprint.pformat(await user_config.verification_code()),
+        )
+        embed.add_field(
+            name="Last Code", value=pprint.pformat(await user_config.last_code())
+        )
+
+        await ctx.author.send(embed=embed)
 
     @verification.command()
     @commands.guild_only()
