@@ -26,7 +26,7 @@ class Verification(commands.Cog):
         self.config.register_guild(
             welcome_message=(
                 "Welcome to the server! Make sure to read the rules!\n"
-                "**Important:** to access the server, you must complete the verification process. Toi verify, follow the instructions below."
+                "**Important:** to access the server, you must complete the verification process. To verify, follow the instructions below."
             ),
             domains=[],
             verified_roles=[],
@@ -122,10 +122,12 @@ class Verification(commands.Cog):
 
         await user_config.last_code.set(verification_code)
 
-        if await user_config.name():
-            await ctx.send(
-                "Name already set, contact a staff member to change it manually."
-            )
+        init_name = await user_config.name()
+        if init_name:
+            if init_name != [first_name, last_name]:
+                await ctx.send(
+                    "Name already set, contact a staff member to change it manually."
+                )
         else:
             await user_config.name.set((first_name, last_name))
 
