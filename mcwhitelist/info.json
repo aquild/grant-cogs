@@ -1,0 +1,7 @@
+{
+  "author": ["Aquild"],
+  "install_msg": "Successfully installed Minecraft Whitelist.",
+  "name": "Minecraft Server Whitelist",
+  "short": "MC Whitelist",
+  "requirements": ["requests"]
+}
