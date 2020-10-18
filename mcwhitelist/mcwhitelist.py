@@ -33,20 +33,21 @@ class MinecraftWhitelist(commands.Cog):
         headers = {"X-Api-Token": await guild_config.api_token() or ""}
 
         # Unwhitelist previous name
-        res = requests.post(
-            f"{api_base}/command/run",
-            headers=headers,
-            json={"command": f"whitelist remove {await member_config.username()}"},
-        )
-        try:
-            if res.json()["errored"]:
+        if await member_config.username():
+            res = requests.post(
+                f"{api_base}/command/run",
+                headers=headers,
+                json={"command": f"whitelist remove {await member_config.username()}"},
+            )
+            try:
+                if res.json()["errored"]:
+                    return await ctx.send(
+                        "Failed to whitelist name. Contact a staff member for help."
+                    )
+            except JSONDecodeError:
                 return await ctx.send(
                     "Failed to whitelist name. Contact a staff member for help."
                 )
-        except JSONDecodeError:
-            return await ctx.send(
-                "Failed to whitelist name. Contact a staff member for help."
-            )
 
         # Set New Username
         await member_config.username.set(username)
