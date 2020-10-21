@@ -68,10 +68,36 @@ class MinecraftWhitelist(commands.Cog):
                 "Failed to whitelist name. Contact a staff member for help."
             )
 
-        await ctx.send("Successfully whitelisted new name.")
+        await ctx.send("Successfully updated whitelisted name.")
 
     @commands.group()
     @commands.guild_only()
+    async def mclookup(self, ctx):
+        """Lookup Minecraft Name/Discord Member pairs"""
+        pass
+
+    @mclookup.command()
+    async def minecraft(self, ctx: commands.Context, member: discord.Member):
+        """Lookup Minecraft username"""
+        member_config = self.config.member(member)
+
+        await ctx.send(
+            f"{member.mention}'s Minecraft username: '{await member_config.username()}'"
+        )
+
+    @mclookup.command()
+    async def discord(self, ctx: commands.Context, name: str):
+        """Lookup Discord username"""
+        members = await self.config.all_members(ctx.guild)
+        for user_id, data in members.items():
+            if data["username"] == name:
+                return await ctx.send(
+                    f"{name}'s Discord name: {ctx.guild.get_member(user_id).mention}"
+                )
+
+    @commands.group()
+    @commands.guild_only()
+    @commands.admin()
     async def mcwhitelistset(self, ctx):
         """Minecraft Whitelist Configuration"""
         pass
