@@ -12,7 +12,7 @@ class MinecraftWhitelist(commands.Cog):
         self.config = Config.get_conf(self, identifier=273062)
 
         # Default config
-        self.config.register_guild(api_base=None, api_token=None)
+        self.config.register_guild(api_base=None, api_token=None, whitelist_role=[])
         self.config.register_member(username=None)
 
     @commands.command()
@@ -21,6 +21,10 @@ class MinecraftWhitelist(commands.Cog):
         """Whitelist yourself on the Minecraft server"""
         guild_config = self.config.guild(ctx.guild)
         member_config = self.config.member(ctx.author)
+
+        # Check if user has permission
+        if not (await guild_config.whitelist_role()) in [role.id for role in ctx.author.roles]:
+            return await ctx.send("Lacking required role.")
 
         # Check if configured
         if not await guild_config.api_base():
@@ -77,7 +81,7 @@ class MinecraftWhitelist(commands.Cog):
         pass
 
     @mclookup.command()
-    async def minecraft(self, ctx: commands.Context, member: discord.Member):
+    async def getminecraft(self, ctx: commands.Context, member: discord.Member):
         """Lookup Minecraft username"""
         member_config = self.config.member(member)
 
@@ -86,7 +90,7 @@ class MinecraftWhitelist(commands.Cog):
         )
 
     @mclookup.command()
-    async def discord(self, ctx: commands.Context, name: str):
+    async def getdiscord(self, ctx: commands.Context, name: str):
         """Lookup Discord username"""
         members = await self.config.all_members(ctx.guild)
         for user_id, data in members.items():
@@ -103,7 +107,7 @@ class MinecraftWhitelist(commands.Cog):
         pass
 
     @mcwhitelistset.command()
-    async def setserverapi(self, ctx: commands.Context, api_base: str, api_token: str):
+    async def serverapi(self, ctx: commands.Context, api_base: str, api_token: str):
         """Set Minecraft Server API (Respite)"""
         guild_config = self.config.guild(ctx.guild)
         await guild_config.api_base.set(api_base)
@@ -112,4 +116,14 @@ class MinecraftWhitelist(commands.Cog):
         await ctx.message.delete()
         await ctx.send(
             f"Set Minecraft server API settings (using Respite). *Message deleted for security*"
+        )
+
+    @mcwhitelistset.command()
+    async def whitelistrole(self, ctx: commands.Context, role: discord.Role):
+        """Set Necessary Role for Whitelisting"""
+        guild_config = self.config.guild(ctx.guild)
+        await guild_config.whitelist_role.set(role.id)
+
+        await ctx.send(
+            f"Set whitelisted role."
         )
