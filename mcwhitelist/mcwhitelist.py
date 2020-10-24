@@ -23,7 +23,9 @@ class MinecraftWhitelist(commands.Cog):
         member_config = self.config.member(ctx.author)
 
         # Check if user has permission
-        if not (await guild_config.whitelist_role()) in [role.id for role in ctx.author.roles]:
+        if not (await guild_config.whitelist_role()) in [
+            role.id for role in ctx.author.roles
+        ]:
             return await ctx.send("Lacking required role.")
 
         # Check if configured
@@ -94,10 +96,12 @@ class MinecraftWhitelist(commands.Cog):
         """Lookup Discord username"""
         members = await self.config.all_members(ctx.guild)
         for user_id, data in members.items():
-            if data["username"] == name:
+            if data["username"].lower() == name.lower():
                 return await ctx.send(
                     f"{name}'s Discord name: {ctx.guild.get_member(user_id).mention}"
                 )
+
+        await ctx.send(f"Nobody was found with the username {name}")
 
     @commands.group()
     @commands.guild_only()
@@ -124,6 +128,4 @@ class MinecraftWhitelist(commands.Cog):
         guild_config = self.config.guild(ctx.guild)
         await guild_config.whitelist_role.set(role.id)
 
-        await ctx.send(
-            f"Set whitelisted role."
-        )
+        await ctx.send(f"Set whitelisted role.")
