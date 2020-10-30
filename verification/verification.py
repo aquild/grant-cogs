@@ -237,9 +237,10 @@ class Verification(commands.Cog):
             user_config = self.config.user(user)
 
             name = await user_config.name()
-            await user_config.name.set((cleanup_str(name[0]), cleanup_str(name[1])))
+            if name:
+                await user_config.name.set((cleanup_str(name[0]), cleanup_str(name[1])))
 
-            await ctx.send("Successfully cleaned up names.")
+                await ctx.send("Successfully cleaned up names.")
 
     @verification.command()
     async def instructions(self, ctx: commands.Context):
