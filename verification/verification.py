@@ -12,6 +12,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def cleanup_str(s: str) -> str:
+    return "".join(c for c in s if c.isalpha()).capitalize()
+
+
 class Verification(commands.Cog):
     """Verify new users"""
 
@@ -129,7 +133,9 @@ class Verification(commands.Cog):
                     "Name already set, contact a staff member to change it manually."
                 )
         else:
-            await user_config.name.set((first_name, last_name))
+            await user_config.name.set(
+                (cleanup_str(first_name), cleanup_str(last_name))
+            )
 
         correct = await user_config.verification_code() == verification_code
         if not correct:
@@ -221,6 +227,19 @@ class Verification(commands.Cog):
         )
 
         await ctx.send("Manually updated user information and added roles.")
+
+    @verification.command()
+    async def cleanupnames(self, ctx: commands.Context, *users: discord.User):
+        if ctx.guild:
+            users = users or ctx.guild.members
+
+        for user in users:
+            user_config = self.config.user(user)
+
+            name = await user_config.name()
+            await user_config.name.set((cleanup_str(name[0]), cleanup_str(name[1])))
+
+            await ctx.send("Successfully cleaned up names.")
 
     @verification.command()
     async def instructions(self, ctx: commands.Context):
