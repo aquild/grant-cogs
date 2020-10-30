@@ -101,15 +101,16 @@ class Verification(commands.Cog):
             prefix = (await self.bot.get_valid_prefixes())[0]
             await ctx.send(
                 (
-                    "Sent verification email...\n"
+                    "Sent verification email. \n"
                     f"Once you've recieved the email use the {prefix} verify command like this to complete your verification:\n"
-                    f"`{prefix}verify <your verification code> <your first name> <your last name>`"
+                    f"`{prefix}verify <your verification code> <your first name> <your last name>`\n"
+                    "*Leave out the brackets*"
                 )
             )
         except Exception as e:
             traceback.print_exc()
             await ctx.send(
-                "There was an error while sending the email. DM a staff member to verify manually."
+                "There was an error while sending the email. Message a staff member to verify manually."
             )
 
     @commands.command()
@@ -233,6 +234,8 @@ class Verification(commands.Cog):
         if ctx.guild:
             users = users or ctx.guild.members
 
+        await ctx.send("Cleaning up names... This may take a while.")
+
         for user in users:
             user_config = self.config.user(user)
 
@@ -240,7 +243,7 @@ class Verification(commands.Cog):
             if name:
                 await user_config.name.set((cleanup_str(name[0]), cleanup_str(name[1])))
 
-                await ctx.send("Successfully cleaned up names.")
+            await ctx.send("Successfully cleaned up names.")
 
     @verification.command()
     async def instructions(self, ctx: commands.Context):
@@ -298,7 +301,7 @@ class Verification(commands.Cog):
     @verificationset.command()
     async def setfromemail(self, ctx, from_email: str):
         await self.config.from_email.set(from_email)
-        await ctx.send("Set from email.")
+        await ctx.send("Set from-email.")
 
     @verificationset.command()
     async def setsendgridkey(self, ctx: commands.Context, key: str):

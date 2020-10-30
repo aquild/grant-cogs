@@ -31,7 +31,7 @@ class MinecraftWhitelist(commands.Cog):
         # Check if configured
         if not await guild_config.api_base():
             return await ctx.send(
-                "Minecraft Whitelist is not configured correctly. Contact a staff member for help."
+                "Minecraft Whitelist is not configured correctly. Message a staff member for help."
             )
 
         # Request parameters
@@ -48,11 +48,11 @@ class MinecraftWhitelist(commands.Cog):
             try:
                 if res.json()["errored"]:
                     return await ctx.send(
-                        "Failed to whitelist name. Contact a staff member for help."
+                        "Failed to whitelist name. Message a staff member for help."
                     )
             except JSONDecodeError:
                 return await ctx.send(
-                    "Failed to whitelist name. Contact a staff member for help."
+                    "Failed to whitelist name. Message a staff member for help."
                 )
 
         # Set New Username
@@ -67,11 +67,11 @@ class MinecraftWhitelist(commands.Cog):
         try:
             if res.json()["errored"]:
                 return await ctx.send(
-                    "Failed to whitelist name. Contact a staff member for help."
+                    "Failed to whitelist name. Message a staff member for help."
                 )
         except JSONDecodeError:
             return await ctx.send(
-                "Failed to whitelist name. Contact a staff member for help."
+                "Failed to whitelist name. Message a staff member for help."
             )
 
         await ctx.send("Successfully updated whitelisted name.")
