@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7e1310f53b0da9c6db71a26a81a8d24c76f112fee899111feae997a282c8c8bb"
+            "sha256": "e7ce16785299f50c066c9c0b7a8c65b1522737f7fb5077a991bb0f44b3c8f570"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -37,10 +37,10 @@
         },
         "aiohttp-json-rpc": {
             "hashes": [
-                "sha256:ea0ee8ef99aa9c24005d82cd2d9be57003f314fcc15fe997d58abcab706e335a",
-                "sha256:ee69054aaaaab3b3ceb942e3f1ec7d101ce015bffeff95e6e07283d5f7113fa9"
+                "sha256:791b72a84ac6f0466488ed09f5c07023a37a1ae8036a746a272ce7c6cf901018",
+                "sha256:e5a40d308dc19a6914d359874c35da17eb42bc463d456b0c8cef86ef52187341"
             ],
-            "version": "==0.13.1"
+            "version": "==0.13.2"
         },
         "aiosqlite": {
             "hashes": [
@@ -157,21 +157,13 @@
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==0.6.0.post1"
         },
-        "discord": {
-            "hashes": [
-                "sha256:9d4debb4a37845543bd4b92cb195bc53a302797333e768e70344222857ff1559",
-                "sha256:ff6653655e342e7721dfb3f10421345fd852c2a33f2cca912b1c39b3778a9429"
-            ],
-            "index": "pypi",
-            "version": "==1.0.1"
-        },
         "discord.py": {
             "hashes": [
-                "sha256:98ea3096a3585c9c379209926f530808f5fcf4930928d8cfb579d2562d119570",
-                "sha256:f9decb3bfa94613d922376288617e6a6f969260923643e2897f4540c34793442"
+                "sha256:2367359e31f6527f8a936751fc20b09d7495dd6a76b28c8fb13d4ca6c55b7563",
+                "sha256:def00dc50cf36d21346d71bc89f0cad8f18f9a3522978dc18c7796287d47de8b"
             ],
             "markers": "python_full_version >= '3.5.3'",
-            "version": "==1.4.1"
+            "version": "==1.5.1"
         },
         "distro": {
             "hashes": [
@@ -307,19 +299,19 @@
         },
         "red-discordbot": {
             "hashes": [
-                "sha256:af9b4054204ef23acaa46e7273ac4ea37acfb2285269b48a1828b4839e4f1dcd",
-                "sha256:f40fc1b1fd0eee3ff9b28a45e66a4a69067d8437e6deef4588e1677d41a4e590"
+                "sha256:629b4f5b784b910cdd30430956982961e84daa88c1217a65cada01ad31f2d8ce",
+                "sha256:677cfacf6667ca0c92f714161287d91212830509c9569838a761257ed1217eca"
             ],
             "index": "pypi",
-            "version": "==3.4.0"
+            "version": "==3.4.2"
         },
         "red-lavalink": {
             "hashes": [
-                "sha256:ade015802e3702b112d1946adc640ab8712c06c174e2ea79c362de8a7d2cca40",
-                "sha256:b22da6811fe490badb388ebbbc3a1d3a9ac79eb717922e58b6cfad19306c5aeb"
+                "sha256:0db583eadae21be733119be110f8f2e807f786e6df811b0c4486fd8d2e43f3e3",
+                "sha256:d3cdddba83513430626e6f8384c54c09cd79a7580001f71cf81441a61e12c70c"
             ],
-            "markers": "python_full_version >= '3.5.3'",
-            "version": "==0.6.0"
+            "markers": "python_version < '3.9' and python_version >= '3.9'",
+            "version": "==0.7.1"
         },
         "schema": {
             "hashes": [

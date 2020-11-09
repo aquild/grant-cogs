@@ -7,8 +7,8 @@ class NicknameRules(commands.Cog):
 
     def __init__(self, bot, verification: commands.Cog):
         self.bot = bot
-        self.config = Config.get_conf(self, identifier=273062)
-        self.verification_config = Config.get_conf(verification, identifier=273062)
+        self.config = Config.get_conf(self, identifier=273062, force_registration=True)
+        self.verification_config = Config.get_conf(verification, identifier=273062, force_registration=True)
 
         # Default config
         self.config.register_global(enabled=False)

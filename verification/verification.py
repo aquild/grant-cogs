@@ -21,7 +21,7 @@ class Verification(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.config = Config.get_conf(self, identifier=273062)
+        self.config = Config.get_conf(self, identifier=273062, force_registration=True)
 
         # Default config
         self.config.register_global(

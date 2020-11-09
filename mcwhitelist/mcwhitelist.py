@@ -9,7 +9,7 @@ class MinecraftWhitelist(commands.Cog):
     """Minecraft Whitelist"""
 
     def __init__(self):
-        self.config = Config.get_conf(self, identifier=273062)
+        self.config = Config.get_conf(self, identifier=273062, force_registration=True)
 
         # Default config
         self.config.register_guild(api_base=None, api_token=None, whitelist_role=[])
