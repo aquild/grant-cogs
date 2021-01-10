@@ -1,5 +1,6 @@
 import discord
 from redbot.core import commands, Config
+import string
 
 
 class NicknameRules(commands.Cog):
@@ -36,6 +37,14 @@ class NicknameRules(commands.Cog):
                 embed.set_author(name=after.guild.name, icon_url=after.guild.icon_url)
 
                 await after.send(embed=embed)
+
+                # Return to prevent uneccessary nick change
+                return
+
+            cleaned_nick = after.display_name.lstrip(string.punctuation + string.whitespace)
+            if after.display_name != cleaned_nick:
+                await after.edit(nick=cleaned_nick)
+
 
     @commands.group()
     async def nicknamerules(self, ctx):
