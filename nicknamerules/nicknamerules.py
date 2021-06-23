@@ -20,7 +20,7 @@ class NicknameRules(commands.Cog):
         if (
             before.display_name != after.display_name
             and await self.config.enabled()
-            and not await self.config.user(after).whitelisted()
+            and not await self.config.member(after).whitelisted()
         ):
             user_name = await self.verification_config.user(after).name()
 
