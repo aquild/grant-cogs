@@ -12,7 +12,7 @@ class Queries(commands.Cog):
 
     @commands.command(aliases=["wiki"])
     async def wikipedia(self, ctx: commands.Context, *args):
-        await ctx.send(f"<https://en.wikipedia.org/w/index.php?search={'+'.join(args)}>")
+        await ctx.send(f"https://en.wikipedia.org/w/index.php?search={'+'.join(args)}")
 
     @commands.command(aliases=["wa"])
     async def wolframalpha(self, ctx: commands.Context, *args):
