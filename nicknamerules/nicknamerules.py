@@ -52,12 +52,14 @@ class NicknameRules(commands.Cog):
         pass
 
     @nicknamerules.command()
+    @commands.admin()
     async def setenabled(self, ctx, enabled: bool):
         await self.config.enabled.set(enabled)
 
         await ctx.send(f"{('Disabled', 'Enabled')[enabled]} nickname rule enforcement.")
 
     @nicknamerules.command()
+    @commands.admin()
     async def setwhitelisted(self, ctx, whitelisted: bool, *members: discord.Member):
         for member in members:
             await self.config.member(member).whitelisted.set(whitelisted)
