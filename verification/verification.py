@@ -56,13 +56,6 @@ class Verification(commands.Cog):
 
         return embed
 
-    @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member):
-        message = await self.config.guild(member.guild).welcome_message()
-        if message:
-            await member.send(
-                content=message, embed=await self.get_instructions(guild=member.guild)
-            )
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, event: discord.RawReactionActionEvent):
